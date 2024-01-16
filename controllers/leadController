@@ -1,0 +1,50 @@
+const { format } = require('date-fns');
+const Lead = require('../model/Lead');
+const {v4: uuid} = require('uuid');
+
+const createNewLead= async(req, res)=>{
+const dateTime = `${format(new Date(), 'yyyyMMdd\tHH:mm:ss')}`;
+
+    
+
+    try{
+        //const newId = await getNextSequenceValue('LeadID');
+        //console.log(newId);
+        const newId = await getNextAvailableId();
+
+        console.log("new ID:"+newId);
+        const result = await Lead.create({
+            LeadName:req.body.LeadName,
+            AccountName:req.body.AccountName,
+            ContactLastName:req.body.ContactLastName,
+            ContactFirstName:req.body.ContactFirstName,
+            ContactNumber:req.body.ContactNumber,
+            Industry:req.body.Industry,
+            LeadUUID: uuid(),
+            LeadID: newId,
+            LeadCreationDate: new Date(),
+            LeadCreatedBy: req.user
+
+
+        })
+        res.status(201).json(result);
+    }catch(err){
+        console.log(req.body)
+        console.log(err.message);
+        res.status(400).json(err.message)
+
+    }
+}
+
+async function getNextAvailableId() {
+    const lastObj = await Lead.findOne({}, {}, { sort: { 'LeadID': -1 } });
+    if (lastObj && lastObj.LeadID !== undefined) {
+        console.log(lastObj);
+        return lastObj.LeadID + 1;
+    } else {
+        return 1;
+    }
+
+  }
+  
+module.exports ={createNewLead};
