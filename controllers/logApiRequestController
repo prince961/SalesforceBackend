@@ -1,0 +1,26 @@
+const ApiLog = require('../model/ApiLog');
+
+async function logApiRequest(req,resCode,responseTime) {
+    const apiRequestLogEntry = new ApiLog({
+    
+      RequestUUID:req.uuid,
+      RequestSentBy: req.user,
+      RequestReceivedDate: req.reqStartTime,
+      RequestURL: req.url,
+      ResponseTimeImMs: responseTime,
+      ResponseCode: resCode,
+      RequestMethod: req.method,
+      RequestOrigin: req.headers.origin
+
+    });
+  
+    try {
+      await apiRequestLogEntry.save();
+      console.log('API request log saved successfully.');
+    } catch (error) {
+      console.error('Error saving API request log:', error);
+    }
+  }
+  
+  module.exports = logApiRequest;
+  
