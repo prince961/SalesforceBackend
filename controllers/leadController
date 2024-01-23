@@ -72,6 +72,54 @@ const updateLead = async(req, res)=>{
     res.json(result);
     const responseTime = new Date()-req.reqStartTime;
     logApiRequest(req,'200',responseTime);
-}  
+}
+
+const getLeads = async (req, res) => {
+    try {
+        const { page = 1, limit = 10, sort, filter } = req.query;
+
+        // Parse query parameters
+        const parsedPage = parseInt(page);
+        const parsedLimit = parseInt(limit);
+
+        // Build the query object based on filter
+        const query = buildQuery(filter);
+
+        // Execute the query with pagination and sorting
+        const leads = await Lead.find(query)
+            .sort(buildSort(sort))
+            .skip((parsedPage - 1) * parsedLimit)
+            .limit(parsedLimit);
+
+        // Get the total count of leads (without pagination)
+        const totalCount = await Lead.countDocuments(query);
+
+        res.status(200).json({
+            leads,
+            total: totalCount,
+            currentPage: parsedPage,
+            totalPages: Math.ceil(totalCount / parsedLimit),
+        });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+// Helper function to build the query based on filters
+const buildQuery = (filter) => {
+    // Implement your logic to build the query based on the filter
+    // For simplicity, let's assume filter is an object with key-value pairs
+    return filter || {};
+};
+
+// Helper function to build the sort object
+const buildSort = (sort) => {
+    // Implement your logic to build the sort object based on the sort parameter
+    // For simplicity, let's assume sort is a string with the field name and direction
+    return sort ? { [sort.split(':')[0]]: sort.split(':')[1] === 'desc' ? -1 : 1 } : {};
+
+};
+
   
-module.exports ={createNewLead, updateLead};
+module.exports ={createNewLead, updateLead, getLeads};

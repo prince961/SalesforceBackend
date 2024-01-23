@@ -7,6 +7,7 @@ const verifyRoles = require('../../middleware/verifyRoles');
 router.route('/')
     .post(verifyRoles(ROLES_LIST.Admin, ROLES_LIST.Editor), leadController.createNewLead)
     .put(leadController.updateLead)
+    .get(leadController.getLeads)
     
 
 module.exports = router;
