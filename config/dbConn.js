@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const { Pool } = require('pg');
+
 
 const connectDB = async () => {
     try {
@@ -11,4 +13,14 @@ const connectDB = async () => {
     }
 }
 
-module.exports = connectDB
+const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'postgres',
+    password:'Samepassword1!',
+    port: 5432
+  });
+  
+  
+
+module.exports = {connectDB,pool}

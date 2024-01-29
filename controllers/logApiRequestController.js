@@ -16,9 +16,9 @@ async function logApiRequest(req,resCode,responseTime) {
   
     try {
       await apiRequestLogEntry.save();
-      console.log('API request log saved successfully.');
+      
     } catch (error) {
-      console.error('Error saving API request log:', error);
+      
     }
   }
   

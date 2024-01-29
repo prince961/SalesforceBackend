@@ -100,9 +100,13 @@ const getLeads = async (req, res) => {
             currentPage: parsedPage,
             totalPages: Math.ceil(totalCount / parsedLimit),
         });
+        const responseTime = new Date()-req.reqStartTime;
+        logApiRequest(req,'200',responseTime);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ error: 'Internal Server Error' });
+        const responseTime = new Date()-req.reqStartTime;
+        logApiRequest(req,'500',responseTime);
     }
 };
 
